@@ -3,9 +3,14 @@ package com.example.thiery.appnotification;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.res.Resources;
+import android.media.AudioManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View.OnClickListener;
 import android.os.Bundle;
 import android.view.Menu;
@@ -13,7 +18,6 @@ import android.view.MenuItem;
 import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -34,12 +38,35 @@ public class MainActivity extends ActionBarActivity {
         notificationManager.notify(0, notification);
     }
 
+    public static boolean isCallActive(Context context){
+        AudioManager manager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+
+        if(manager.getMode()==AudioManager.MODE_IN_CALL){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        showNotification();
+
+       if (isCallActive(getApplicationContext())) {
+           showNotification();
+       }
+
+        Button button1=(Button)findViewById(R.id.button);
+        button1.setOnClickListener(new OnClickListener(){
+            public void onClick(View view){
+                if (view.getId()==R.id.button){
+                    Log.d("098", "Thiery est passé");
+                    showNotification();
+                }
+            }
+        });
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
